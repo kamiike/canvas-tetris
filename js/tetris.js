@@ -24,11 +24,34 @@ var shapes = [
 var colors = [
     'cyan', 'orange', 'blue', 'yellow', 'red', 'green', 'purple'
 ];
+var shapeId;
+var count;
+
+function shuffle(){
+    var arr = [];    
+    for ( var i = 0;  i < shapes.length;  i++ ) {
+        arr.push( i );
+    }
+    var a = shapes.length;
+     
+    while ( a ) {
+        var j = Math.floor( Math.random() * a );
+        var t = arr[ --a ];
+        arr[ a ] = arr[ j ];
+        arr[ j ] = t;
+    }
+
+    return arr;
+}
 
 // creates a new 4x4 shape in global variable 'current'
 // 4x4 so as to cover the size when the shape is rotated
-function newShape() {
-    var id = Math.floor( Math.random() * shapes.length );
+function newShape( count ) {
+    if ( count == shapes.length ) {
+        count = 0;
+        shapeId = shuffle();
+    }
+    var id = shapeId[ count ];
     var shape = shapes[ id ]; // maintain id for color filling
 
     current = [];
@@ -50,6 +73,9 @@ function newShape() {
     // position where the shape will evolve
     currentX = 5;
     currentY = 0;
+    
+    count++;
+    return count;
 }
 
 // clears the board
@@ -76,7 +102,8 @@ function tick() {
             clearAllIntervals();
             return false;
         }
-        newShape();
+        var tmpCount = count;
+        count = newShape( tmpCount );
     }
 }
 
@@ -197,7 +224,9 @@ function newGame() {
     clearAllIntervals();
     intervalRender = setInterval( render, 30 );
     init();
-    newShape();
+    var newCount = 0;
+    shapeId = shuffle();
+    count = newShape( newCount );
     lose = false;
     interval = setInterval( tick, 400 );
 }
